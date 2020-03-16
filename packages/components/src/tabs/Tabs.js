@@ -60,7 +60,7 @@ class Tabs extends React.Component {
     const currentSelected = this.props.selected;
     const prevSelected = prevProps.selected;
     const currentSelectedTab = this.props.tabs[currentSelected];
-    const currentSelectedTabIsDiabled = currentSelectedTab && currentSelectedTab.disabled;
+    const currentSelectedTabIsDisabled = currentSelectedTab && currentSelectedTab.disabled;
     const prevSelectedTab = prevProps.tabs[prevSelected];
     const prevSelectedTabIsDisabled = prevSelectedTab && prevSelectedTab.disabled;
     const currentDisabledTabsLength = this.props.tabs.filter(enabledTabsFilter).length;
@@ -69,7 +69,7 @@ class Tabs extends React.Component {
     if (
       currentSelected !== prevSelected ||
       currentDisabledTabsLength !== prevDisabledTabsLength ||
-      currentSelectedTabIsDiabled !== prevSelectedTabIsDisabled
+      currentSelectedTabIsDisabled !== prevSelectedTabIsDisabled
     ) {
       this.animateToTab(
         clamp(currentSelected, MIN_INDEX, this.MAX_INDEX),
