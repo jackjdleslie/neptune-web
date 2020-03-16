@@ -29,7 +29,7 @@ class Tabs extends React.Component {
     translateX: 0,
     translateFrom: '0px',
     translateTo: '0px',
-    translateLineX: 0,
+    translateLineX: null,
     isAnimating: false,
     isSwiping: false,
     isScrolling: false,
@@ -361,13 +361,15 @@ class Tabs extends React.Component {
               </Tab>
             );
           })}
-          <div
-            className={classNames('tabs__line')}
-            style={{
-              width: `${(1 / tabs.length) * 100}%`,
-              transform: `translateX(${translateLineX})`,
-            }}
-          />
+          {translateLineX ? (
+            <div
+              className={classNames('tabs__line')}
+              style={{
+                width: `${(1 / tabs.length) * 100}%`,
+                transform: `translateX(${translateLineX})`,
+              }}
+            />
+          ) : null}
         </TabList>
         <div
           className="tabs__panel-container"
