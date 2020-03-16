@@ -108,9 +108,9 @@ class Tabs extends React.Component {
   };
 
   isTabDisabled = index => {
-    const { tabs: allTabs } = this.props;
+    const { tabs } = this.props;
 
-    return allTabs[index] && allTabs[index].disabled;
+    return tabs[index] && tabs[index].disabled;
   };
 
   getTabToSelect = (selected, start, end) => {
