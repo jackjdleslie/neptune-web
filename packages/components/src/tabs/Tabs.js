@@ -43,7 +43,7 @@ class Tabs extends React.Component {
   }
 
   get MAX_INDEX() {
-    return this.filteredTabsLength - 1;
+    return this.props.tabs.length - 1;
   }
 
   componentDidMount() {
@@ -158,20 +158,16 @@ class Tabs extends React.Component {
 
   animateToTab = index => {
     this.animateLine(index);
-    this.animatePanel(index);
+
+    const disabledTabsUntilIndexCount = this.props.tabs
+      .slice(0, index)
+      .filter(tab => !enabledTabsFilter(tab)).length;
+
+    this.animatePanel(index - disabledTabsUntilIndexCount);
   };
 
   animateLine = index => {
-    const { tabs: allTabs } = this.props;
-    let nextIndex = index;
-
-    const disabledIndexes = allTabs.slice(0, index).filter(tab => tab.disabled).length;
-
-    while (this.isTabDisabled(nextIndex)) {
-      nextIndex += 1;
-    }
-
-    this.setState({ translateLineX: `${(nextIndex + disabledIndexes) * 100}%` });
+    this.setState({ translateLineX: `${index * 100}%` });
   };
 
   animatePanel = index => {
@@ -305,7 +301,7 @@ class Tabs extends React.Component {
   };
 
   render() {
-    const { tabs: allTabs, changeTabOnSwipe, name, selected, className } = this.props;
+    const { tabs, changeTabOnSwipe, name, selected, className } = this.props;
     const {
       isSwiping,
       translateLineX,
@@ -314,7 +310,6 @@ class Tabs extends React.Component {
       translateTo,
       lastSwipeVelocity,
     } = this.state;
-    const tabs = allTabs.filter(tab => !tab.disabled);
 
     const distanceSwiped = Math.abs(-parseInt(translateFrom, 10) - this.containerWidth * selected);
 
@@ -336,19 +331,18 @@ class Tabs extends React.Component {
         className={classNames('tabs', className)}
       >
         <TabList>
-          {allTabs.map(({ title, disabled }, index) => {
-            const selectIndex = tabs.findIndex(tab => tab.title === title);
+          {tabs.map(({ title, disabled }, index) => {
             return (
               <Tab
                 key={title}
                 id={`${name}-tab-${index}`}
                 panelId={`${name}-panel-${index}`}
-                selected={selected === selectIndex}
+                selected={selected === index}
                 disabled={disabled}
-                onClick={disabled ? null : this.handleTabClick(selectIndex)}
-                onKeyDown={this.onKeyDown(selectIndex)}
+                onClick={disabled ? null : this.handleTabClick(index)}
+                onKeyDown={this.onKeyDown(index)}
                 style={{
-                  width: `${(1 / allTabs.length) * 100}%`,
+                  width: `${(1 / tabs.length) * 100}%`,
                 }}
               >
                 {title}
@@ -358,7 +352,7 @@ class Tabs extends React.Component {
           <div
             className={classNames('tabs__line')}
             style={{
-              width: `${(1 / allTabs.length) * 100}%`,
+              width: `${(1 / tabs.length) * 100}%`,
               transform: `translateX(${translateLineX})`,
             }}
           />
@@ -399,19 +393,23 @@ class Tabs extends React.Component {
                   transform: hidePanelOverflow ? props.transform : 'translateX(0px)',
                 }}
               >
-                {tabs.map(({ content, disabled }, index) => (
-                  <TabPanel
-                    key={tabs[index].title}
-                    tabId={`${name}-tab-${index}`}
-                    id={`${name}-panel-${index}`}
-                    style={{
-                      width: hidePanelOverflow ? `${(1 / this.filteredTabsLength) * 100}%` : '100%',
-                      display: hidePanelOverflow || index === selected ? 'block' : 'none',
-                    }}
-                  >
-                    {disabled ? null : content}
-                  </TabPanel>
-                ))}
+                {tabs.map(({ content, disabled }, index) =>
+                  !disabled ? (
+                    <TabPanel
+                      key={tabs[index].title}
+                      tabId={`${name}-tab-${index}`}
+                      id={`${name}-panel-${index}`}
+                      style={{
+                        width: hidePanelOverflow
+                          ? `${(1 / this.filteredTabsLength) * 100}%`
+                          : '100%',
+                        display: hidePanelOverflow || index === selected ? 'block' : 'none',
+                      }}
+                    >
+                      {content}
+                    </TabPanel>
+                  ) : null,
+                )}
               </div>
             )}
           </Spring>
