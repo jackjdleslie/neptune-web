@@ -118,8 +118,16 @@ class Tabs extends React.Component {
 
     if (swipedLeftToRight(start, end)) {
       nextSelected -= 1;
+
+      if (nextSelected > MIN_INDEX && this.isTabDisabled(nextSelected)) {
+        return this.getTabToSelect(nextSelected, start, end);
+      }
     } else if (swipedRightToLeft(start, end)) {
       nextSelected += 1;
+
+      if (nextSelected < this.MAX_INDEX && this.isTabDisabled(nextSelected)) {
+        return this.getTabToSelect(nextSelected, start, end);
+      }
     }
 
     nextSelected = clamp(
@@ -159,14 +167,14 @@ class Tabs extends React.Component {
     onTabSelect(index);
   };
 
-  getTabIndexShiftedByDisabledTabs(index) {
+  getTabIndexWithoutDisabledTabs(index) {
     return index - this.props.tabs.slice(0, index).filter(tab => !enabledTabsFilter(tab)).length;
   }
 
   animateToTab = (index, instant) => {
     this.animateLine(index);
 
-    this.animatePanel(this.getTabIndexShiftedByDisabledTabs(index), instant);
+    this.animatePanel(this.getTabIndexWithoutDisabledTabs(index), instant);
   };
 
   animateLine = index => {
@@ -222,7 +230,7 @@ class Tabs extends React.Component {
   handleTouchMove = event => {
     const { start } = this.state;
     const { selected: currentSelectedFromProps } = this.props;
-    const selected = this.getTabIndexShiftedByDisabledTabs(currentSelectedFromProps);
+    const selected = this.getTabIndexWithoutDisabledTabs(currentSelectedFromProps);
     const end = {
       x: event.nativeEvent.changedTouches[0].clientX,
       y: event.nativeEvent.changedTouches[0].clientY,
@@ -245,7 +253,7 @@ class Tabs extends React.Component {
     this.setState({ isScrolling, isSwiping });
 
     if (isSwiping) {
-      let nextSelected = selected;
+      let nextSelected = currentSelectedFromProps;
 
       if (this.swipedOverHalfOfContainer(difference)) {
         nextSelected = this.getTabToSelect(nextSelected, start, end);
