@@ -50,7 +50,7 @@ class Tabs extends React.Component {
     const { selected } = this.props;
 
     this.switchTab(clamp(selected, MIN_INDEX, this.MAX_INDEX));
-    this.animateToTab(clamp(selected, MIN_INDEX, this.MAX_INDEX));
+    this.animateToTab(clamp(selected, MIN_INDEX, this.MAX_INDEX), true);
     document.body.addEventListener('touchmove', this.disableScroll, { passive: false });
     document.body.addEventListener('touchforcechange', this.disableScroll, { passive: false });
     window.addEventListener('resize', this.handleResize);
@@ -60,18 +60,21 @@ class Tabs extends React.Component {
     const currentSelected = this.props.selected;
     const prevSelected = prevProps.selected;
     const currentSelectedTab = this.props.tabs[currentSelected];
+    const currentSelectedTabIsDiabled = currentSelectedTab && currentSelectedTab.disabled;
     const prevSelectedTab = prevProps.tabs[prevSelected];
+    const prevSelectedTabIsDisabled = prevSelectedTab && prevSelectedTab.disabled;
     const currentDisabledTabsLength = this.props.tabs.filter(enabledTabsFilter).length;
     const prevDisabledTabsLength = prevProps.tabs.filter(enabledTabsFilter).length;
 
     if (
       currentSelected !== prevSelected ||
       currentDisabledTabsLength !== prevDisabledTabsLength ||
-      (currentSelectedTab && prevSelectedTab
-        ? currentSelectedTab.disabled !== prevSelectedTab.disabled
-        : false)
+      currentSelectedTabIsDiabled !== prevSelectedTabIsDisabled
     ) {
-      this.animateToTab(clamp(currentSelected, MIN_INDEX, this.MAX_INDEX));
+      this.animateToTab(
+        clamp(currentSelected, MIN_INDEX, this.MAX_INDEX),
+        currentSelected === prevSelected,
+      );
     }
   }
 
@@ -156,21 +159,21 @@ class Tabs extends React.Component {
     onTabSelect(index);
   };
 
-  animateToTab = index => {
+  animateToTab = (index, instant) => {
     this.animateLine(index);
 
     const disabledTabsUntilIndexCount = this.props.tabs
       .slice(0, index)
       .filter(tab => !enabledTabsFilter(tab)).length;
 
-    this.animatePanel(index - disabledTabsUntilIndexCount);
+    this.animatePanel(index - disabledTabsUntilIndexCount, instant);
   };
 
   animateLine = index => {
     this.setState({ translateLineX: `${index * 100}%` });
   };
 
-  animatePanel = index => {
+  animatePanel = (index, instant = false) => {
     const { translateTo: currentTranslateTo } = this.state;
 
     const translateFrom = currentTranslateTo;
@@ -178,7 +181,7 @@ class Tabs extends React.Component {
 
     this.setState({
       selectedTabIndex: index,
-      isAnimating: translateFrom !== translateTo,
+      isAnimating: !instant && translateFrom !== translateTo,
       translateFrom,
       translateTo,
     });
