@@ -159,14 +159,14 @@ class Tabs extends React.Component {
     onTabSelect(index);
   };
 
+  getTabIndexShiftedByDisabledTabs(index) {
+    return index - this.props.tabs.slice(0, index).filter(tab => !enabledTabsFilter(tab)).length;
+  }
+
   animateToTab = (index, instant) => {
     this.animateLine(index);
 
-    const disabledTabsUntilIndexCount = this.props.tabs
-      .slice(0, index)
-      .filter(tab => !enabledTabsFilter(tab)).length;
-
-    this.animatePanel(index - disabledTabsUntilIndexCount, instant);
+    this.animatePanel(this.getTabIndexShiftedByDisabledTabs(index), instant);
   };
 
   animateLine = index => {
@@ -221,7 +221,8 @@ class Tabs extends React.Component {
 
   handleTouchMove = event => {
     const { start } = this.state;
-    const { selected } = this.props;
+    const { selected: currentSelectedFromProps } = this.props;
+    const selected = this.getTabIndexShiftedByDisabledTabs(currentSelectedFromProps);
     const end = {
       x: event.nativeEvent.changedTouches[0].clientX,
       y: event.nativeEvent.changedTouches[0].clientY,
