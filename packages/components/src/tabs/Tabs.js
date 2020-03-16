@@ -113,6 +113,10 @@ class Tabs extends React.Component {
     return tabs[index] && tabs[index].disabled;
   };
 
+  /*
+   * Gets the next tab that should be selected based on the swipe direction
+   * and the current selected tab (is called recursively to account for disabled tabs).
+   */
   getTabToSelect = (selected, start, end) => {
     let nextSelected = selected;
 
@@ -181,6 +185,7 @@ class Tabs extends React.Component {
     this.setState({ translateLineX: `${index * 100}%` });
   };
 
+  // Pass `instant` to set the `translateX` to the new panel with no transition
   animatePanel = (index, instant = false) => {
     const { translateTo: currentTranslateTo } = this.state;
 
