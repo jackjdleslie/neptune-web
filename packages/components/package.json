@@ -28,10 +28,8 @@
     "build:compile-css": "gulp lessCompiler",
     "build:umd": "NODE_ENV=umd rollup -c",
     "build:umd-nopolyfill": "NODE_ENV=umd-nopolyfill rollup -c",
-    "build:es": "NODE_ENV=es babel src -d build/es/polyfill --ignore '**/*.spec.js','**/*.story.js'",
-    "build:es-nopolyfill": "NODE_ENV=es-nopolyfill babel src -d build/es/no-polyfill --ignore '**/*.spec.js','**/*.story.js'",
-    "build:copy-files": "cpx 'src/**/!(db)/*.{css,json,svg}' build/es/polyfill",
-    "build:copy-files2": "cpx 'src/**/!(db)/*.{css,json,svg}' build/es/no-polyfill",
+    "build:es": "NODE_ENV=es rollup -c",
+    "build:es-nopolyfill": "NODE_ENV=es-nopolyfill rollup -c",
     "test": "gulp lessCompiler && jest --env=jsdom --runInBand && yarn test:bundleSize",
     "test:watch": "jest --watch --env=jsdom",
     "test:bundleSize": "bundlesize",
@@ -125,6 +123,7 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-gzip": "^2.3.0",
     "rollup-plugin-postcss": "^2.0.3",
+    "rollup-plugin-terser": "^5.3.0",
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
