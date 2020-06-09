@@ -19,6 +19,7 @@ const umdConfig = {
       },
     ],
   ],
+  plugins: ['transform-react-remove-prop-types'],
 };
 
 const umdConfigNoPolyfill = {
@@ -32,6 +33,7 @@ const umdConfigNoPolyfill = {
       },
     ],
   ],
+  plugins: ['transform-react-remove-prop-types'],
 };
 
 const esConfig = {
@@ -49,6 +51,7 @@ const esConfig = {
     ],
     ['minify', { builtIns: false, mangle: { exclude: { separators: true } } }],
   ],
+  plugins: ['transform-react-remove-prop-types'],
 };
 
 const esConfigNoPolyfill = {
@@ -56,6 +59,7 @@ const esConfigNoPolyfill = {
     ['@babel/preset-env', { useBuiltIns: false, modules: false }],
     ['minify', { builtIns: false, mangle: { exclude: { separators: true } } }],
   ],
+  plugins: ['transform-react-remove-prop-types'],
 };
 
 const testConfig = {
@@ -79,7 +83,6 @@ module.exports = {
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-transform-react-jsx',
     '@babel/plugin-transform-runtime',
-    'transform-react-remove-prop-types',
   ],
   env: {
     test: testConfig,

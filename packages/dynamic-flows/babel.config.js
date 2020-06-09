@@ -18,6 +18,7 @@ const esConfig = {
       },
     ],
   ],
+  plugins: ['transform-react-remove-prop-types'],
 };
 
 const esConfigNoPolyfill = {
@@ -30,6 +31,7 @@ const esConfigNoPolyfill = {
       },
     ],
   ],
+  plugins: ['transform-react-remove-prop-types'],
 };
 
 const testConfig = {
@@ -53,7 +55,6 @@ module.exports = {
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-transform-react-jsx',
     '@babel/plugin-transform-runtime',
-    'transform-react-remove-prop-types',
   ],
   env: {
     test: testConfig,
