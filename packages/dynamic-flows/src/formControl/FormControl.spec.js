@@ -45,14 +45,14 @@ describe('FormControl', () => {
   //   testTextControlValidation('password', 'input[type="password"]');
   //   testTextControlValidation('textarea', 'textarea');
 
-  testCustomControl('select', Select);
-  testCustomControl('date', DateInput);
-  testCustomControl('tel', PhoneNumberInput);
-  testCustomControl('checkbox', Checkbox);
-  testCustomControl('upload', Upload);
-  testCustomControl('text', InputWithDisplayFormat);
-  testCustomControl('textarea', TextareaWithDisplayFormat);
-  testCustomControl('date-lookup', DateLookup);
+  testCustomControl('select', Select, <Select />);
+  testCustomControl('date', DateInput, <DateInput />);
+  testCustomControl('tel', PhoneNumberInput, <PhoneNumberInput />);
+  testCustomControl('checkbox', Checkbox, <Checkbox />);
+  testCustomControl('upload', Upload, <Upload />);
+  testCustomControl('text', InputWithDisplayFormat, <InputWithDisplayFormat />);
+  testCustomControl('textarea', TextareaWithDisplayFormat, <TextareaWithDisplayFormat />);
+  testCustomControl('date-lookup', DateLookup, <DateLookup />);
 
   // testAutoComplete('text', 'input');
   // testAutoComplete('number', 'input');
@@ -478,13 +478,13 @@ describe('FormControl', () => {
     return { ...defaultProps, ...customProps };
   }
 
-  function getPropsToPassDown(controlType, customComponent) {
+  function getPropsToPassDown(controlType, customComponentJsx) {
     const PROPS = Object.keys(getPropsForControlType(controlType));
 
-    return Object.keys(customComponent.propTypes).filter((key) => PROPS.includes(key));
+    return Object.keys(customComponentJsx.props).filter((key) => PROPS.includes(key));
   }
 
-  function testCustomControl(controlType, customComponent) {
+  function testCustomControl(controlType, customComponent, customComponentJsx) {
     let custom;
 
     const EVENT = {
@@ -493,7 +493,7 @@ describe('FormControl', () => {
       onFocus: 'focus',
     };
 
-    const PASSED_DOWN_PROPS = getPropsToPassDown(controlType, customComponent);
+    const PASSED_DOWN_PROPS = getPropsToPassDown(controlType, customComponentJsx);
     const CALLBACK_PROPS = ['onChange', 'onBlur', 'onFocus'];
 
     if (!controlType) {
