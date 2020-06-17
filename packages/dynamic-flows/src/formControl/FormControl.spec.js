@@ -45,14 +45,14 @@ describe('FormControl', () => {
   //   testTextControlValidation('password', 'input[type="password"]');
   //   testTextControlValidation('textarea', 'textarea');
 
-  testCustomControl('select', Select, <Select />);
-  testCustomControl('date', DateInput, <DateInput />);
-  testCustomControl('tel', PhoneNumberInput, <PhoneNumberInput />);
-  testCustomControl('checkbox', Checkbox, <Checkbox />);
-  testCustomControl('upload', Upload, <Upload />);
-  testCustomControl('text', InputWithDisplayFormat, <InputWithDisplayFormat />);
-  testCustomControl('textarea', TextareaWithDisplayFormat, <TextareaWithDisplayFormat />);
-  testCustomControl('date-lookup', DateLookup, <DateLookup />);
+  testCustomControl('select', Select);
+  testCustomControl('date', DateInput);
+  testCustomControl('tel', PhoneNumberInput);
+  testCustomControl('checkbox', Checkbox);
+  testCustomControl('upload', Upload);
+  testCustomControl('text', InputWithDisplayFormat);
+  testCustomControl('textarea', TextareaWithDisplayFormat);
+  testCustomControl('date-lookup', DateLookup);
 
   // testAutoComplete('text', 'input');
   // testAutoComplete('number', 'input');
@@ -478,13 +478,15 @@ describe('FormControl', () => {
     return { ...defaultProps, ...customProps };
   }
 
-  function getPropsToPassDown(controlType, customComponentJsx) {
+  function getPropsToPassDown(controlType, CustomComponent) {
     const PROPS = Object.keys(getPropsForControlType(controlType));
 
-    return Object.keys(customComponentJsx.props).filter((key) => PROPS.includes(key));
+    const customComponentWrapper = mount(<CustomComponent onChange={jest.fn()} options={[]} />);
+
+    return Object.keys(customComponentWrapper.props()).filter((key) => PROPS.includes(key));
   }
 
-  function testCustomControl(controlType, customComponent, customComponentJsx) {
+  function testCustomControl(controlType, CustomComponent) {
     let custom;
 
     const EVENT = {
@@ -493,15 +495,15 @@ describe('FormControl', () => {
       onFocus: 'focus',
     };
 
-    const PASSED_DOWN_PROPS = getPropsToPassDown(controlType, customComponentJsx);
+    const PASSED_DOWN_PROPS = getPropsToPassDown(controlType, CustomComponent);
     const CALLBACK_PROPS = ['onChange', 'onBlur', 'onFocus'];
 
     if (!controlType) {
       throw new Error('Missing mandatory value in `controlType` argument!');
     }
 
-    if (!customComponent) {
-      throw new Error('Missing mandatory value in `customComponent` argument!');
+    if (!CustomComponent) {
+      throw new Error('Missing mandatory value in `CustomComponent` argument!');
     }
 
     describe(`type: ${controlType}`, () => {
@@ -510,7 +512,7 @@ describe('FormControl', () => {
         component = shallow(
           <FormControl {...{ ...defaultProps, ...props }} displayPattern="**-**" />,
         );
-        const child = component.find(customComponent);
+        const child = component.find(CustomComponent);
         custom = child.length > 1 ? child.first() : child;
       });
 
@@ -524,7 +526,7 @@ describe('FormControl', () => {
           const TEST_FILE = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
           component = mount(<FormControl {...{ ...defaultProps, ...props }} />);
 
-          component.find(customComponent).instance().fileDropped(TEST_FILE);
+          component.find(CustomComponent).instance().fileDropped(TEST_FILE);
 
           expect(props.onChange).toHaveBeenCalled();
         });
